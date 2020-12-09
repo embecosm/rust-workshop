@@ -2,10 +2,11 @@ mod animal;
 mod cage;
 mod error;
 
-use std::cmp::Reverse;
+use std::{cmp::Reverse, collections::HashMap};
 
 pub use animal::Animal;
 pub use cage::Cage;
+use error::Error;
 pub use error::Result;
 
 /// `animal_groups` will take an iterator an group animals by species into cages.
@@ -23,8 +24,16 @@ pub use error::Result;
 /// basically means that this function takes some `Iterator` which you can then
 /// use in e.g. a `for`-loop:
 fn animal_groups<'a>(animals: impl Iterator<Item = &'a Animal>) -> Vec<Cage> {
-    let _ = animals; // suppress warning
-    vec![]
+    // vec![]
+    let mut animal_map: HashMap<_, Vec<_>> = HashMap::new();
+    for animal in animals {
+        animal_map
+            .entry(&animal.species)
+            .or_default()
+            .push(animal.clone());
+    }
+
+    animal_map.values().cloned().map(Cage::from).collect()
 }
 
 /// `sorted_animal_groups` does the same as (and can reuse) `animal_groups`.
@@ -37,9 +46,10 @@ where
     F: Fn(&Cage) -> K,
     K: Ord,
 {
-    let _ = animals; // suppress warning
-    let _ = key; // suppress warning
-    vec![]
+    // vec![]
+    let mut sorted_animal_groups = animal_groups(animals);
+    sorted_animal_groups.sort_by_key(|cage| key(cage));
+    sorted_animal_groups
 }
 
 /// `fitting_cage` tries to `find` a fitting cage for the passed herbivore.
@@ -49,8 +59,8 @@ where
 /// With the use of iterators, this is a one-liner
 fn fitting_cage<'a>(cages: &'a mut [Cage], herbivore: &Animal) -> Option<&'a mut Cage> {
     assert!(!herbivore.carnivore);
-    let _ = cages; // suppress warning
-    None
+    // None
+    cages.iter_mut().find(|cage| cage.fits(herbivore))
 }
 
 /// BONUS: `extract_food` tries to extract the food animals from the passed animals.
@@ -69,8 +79,28 @@ fn extract_food(
     animals: Vec<Animal>,
     food: Option<&str>,
 ) -> Result<(Option<Vec<Animal>>, Vec<Animal>)> {
-    let _ = food; // suppress warning
-    Ok((None, animals))
+    // (None, animals)
+    Ok(if let Some(food) = food {
+        if !animals.iter().any(|animal| animal.species == food) {
+            return Err(Error::NoFood(food.to_owned()));
+        }
+
+        (
+            Some(
+                animals
+                    .iter()
+                    .filter(move |animal| animal.species == food)
+                    .cloned()
+                    .collect::<Vec<_>>(),
+            ),
+            animals
+                .into_iter()
+                .filter(|animal| animal.species != food)
+                .collect::<Vec<_>>(),
+        )
+    } else {
+        (None, animals)
+    })
 }
 
 // You won't have to modify the following functions. They should Just Work™.

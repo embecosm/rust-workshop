@@ -1,5 +1,7 @@
 use std::fmt::{Debug, Display, Formatter};
 
+use crate::Animal;
+
 /// `Error` is the error type of this crate.
 ///
 /// Usually crates define their own Error type which then can be used in other
@@ -10,6 +12,8 @@ pub enum Error {
     IOError(std::io::Error),
     Serialization(serde_json::Error),
     // Add custom variants here
+    NoFood(String),
+    FoodTooStrong(Animal, Animal),
 }
 
 // You should implement the `Display` trait for your error, so that crates can
@@ -23,6 +27,15 @@ impl Display for Error {
             Self::IOError(err) => write!(f, "{}", err),
             Self::Serialization(err) => write!(f, "{}", err),
             // Deal with more variants here
+            Self::NoFood(food) => write!(f, "There is no food species with the name {}!", food),
+            Self::FoodTooStrong(food, weak) => write!(
+                f,
+                "`{food_name}` of species `{food_species}` is to strong for `{weak_name}` of species `{weak_species}`.",
+                food_name=food.name,
+                food_species=food.species,
+                weak_name=weak.name,
+                weak_species=weak.species
+            ),
         }
     }
 }

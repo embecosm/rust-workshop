@@ -1,4 +1,4 @@
-use crate::{Animal, Result};
+use crate::{Animal, Error, Result};
 use serde::{Deserialize, Serialize};
 
 /// Nothing to change here
@@ -36,7 +36,8 @@ impl Cage {
     /// This method should be a one-liner. Take a look at the `Vec`
     /// documentation to find out how to `extend` one vector with another.
     pub fn move_from(&mut self, cage: Cage) {
-        let _ = cage; // suppress warning
+        // let _ = cage; // suppress warning
+        self.animals.extend(cage.animals);
     }
 
     /// `weakest` will return the weakest animal in `self`.
@@ -46,7 +47,8 @@ impl Cage {
     /// Since you have implemented `Ord` on `Animal`, you can use the `min()`
     /// method from the `Iterator` trait.
     pub fn weakest(&self) -> Option<&Animal> {
-        None
+        // None
+        self.animals.iter().min()
     }
 
     /// `strongest` will return the strongest animal in `self`.
@@ -56,7 +58,8 @@ impl Cage {
     /// Since you have implemented `Ord` on `Animal`, you can use the `max()`
     /// method from the `Iterator` trait.
     pub fn strongest(&self) -> Option<&Animal> {
-        None
+        // None
+        self.animals.iter().max()
     }
 
     /// `fits` will determine if the passed herbivore can be put in `self`.
@@ -71,7 +74,10 @@ impl Cage {
     /// converts the type in the option to any type you want.
     pub fn fits(&self, herbivore: &Animal) -> bool {
         assert!(!herbivore.carnivore);
-        false
+        // false
+        self.strongest()
+            .map(|strongest_animal| strongest_animal < herbivore)
+            .unwrap_or(true)
     }
 
     /// BONUS: `deliver_food` will move the food from `food_cage` to `self`.
@@ -81,7 +87,18 @@ impl Cage {
     /// This method errors, if an animal in the `food_cage` is stronger than
     /// the weakest animal in `self`.
     pub fn deliver_food(&mut self, food_cage: Cage) -> Result<()> {
-        let _ = food_cage; // suppress warning
+        // Ok(())
+        if let (Some(strongest_food), Some(weakest_animal))= (food_cage.strongest(), self.weakest()) {
+            if food_cage.strongest() >= self.weakest() {
+                return Err(Error::FoodTooStrong(
+                    strongest_food.clone(),
+                    weakest_animal.clone(),
+                ));
+            }
+        }
+
+        self.move_from(food_cage);
+
         Ok(())
     }
 }

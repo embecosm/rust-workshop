@@ -21,8 +21,8 @@ pub struct Animal {
 // project, we only care about the `species` when comparing animals.
 impl PartialEq for Animal {
     fn eq(&self, other: &Self) -> bool {
-        let _ = other; // suppress warning
-        false
+        // false
+        self.species == other.species
     }
 }
 
@@ -30,8 +30,8 @@ impl PartialEq for Animal {
 // the `Ord` documentation for ideas how to implement this.
 impl Ord for Animal {
     fn cmp(&self, other: &Self) -> Ordering {
-        let _ = other; // suppress warning
-        Ordering::Equal
+        // Ordering::Equal
+        self.strength.cmp(&other.strength)
     }
 }
 
