@@ -4,7 +4,7 @@
 /// The `derive` attribute provides some functionality to the struct. In this case, those derives
 /// allows comparisons of instances of `S` and the cloning of `S`. "Things" can be derived, when all
 /// fields also derive or implement these "things".
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 struct S {
     a: u32,
     b: String,
@@ -22,7 +22,7 @@ impl S {
     }
 
     // This is a method. The first argument is a reference to `self`. But is this correct?
-    fn push_bool(&self, b: bool) {
+    fn push_bool(&mut self, b: bool) {
         self.c.push(b);
     }
 }
@@ -54,6 +54,9 @@ impl E {
         match self {
             Self::A => println!("A is boring"),
             Self::B(x, _) if *x == 42 => println!("This seems to be the answer"),
+            Self::B(_, b) => println!("To be or not to be? The answer is: {}", b),
+            Self::C { .. } => println!("C is always cool"),
+            Self::D(s) => println!("S says: {:?}", s),
         }
     }
 
@@ -61,12 +64,13 @@ impl E {
     // as a tuple. Tuples can contain as many elements as you like.
     //
     // Did you notice, that `self` is moved _into_ this method?
-    fn to_tuple(self) -> (u32, bool) {
+    fn into_tuple(self) -> (u32, bool) {
         match self {
             Self::A => (0, false),
             Self::B(a, b) => (a, b),
             Self::C { a, b } => (a as u32, b.is_empty()),
             // Add the `E::D` case by destructuring `S`
+            Self::D(S { a, c, .. }) => (a, c.get(0).copied().unwrap_or_default()),
         }
     }
 }
@@ -78,7 +82,7 @@ fn main() {
     if let Some(e) = &e {
         e.creative_printing();
     } else {
-        let mut my_s = S::new(42, "Hello, Rustacean!");
+        let mut my_s = S::new(42, "Hello, Rustacean!".to_string());
         my_s.push_bool(true);
         match my_s {
             S { a, c, .. } if a > 10 => println!("{:?}", c.get(0)),
@@ -106,5 +110,5 @@ fn main() {
         E::D(S::new(0, String::new()))
     };
 
-    println!("{:?}", e2.to_tuple());
+    println!("{:?}", e2.into_tuple());
 }
