@@ -63,10 +63,28 @@ fn main() {
     }
 
     // And now you: Try to use functions like `map` or `and_then` to transform the results.
-    let float_mult: Option<f32> = Some(0f32);
+    let float_mult: Option<f32> = mult_some.map(|x| x as f32);
 
-    let still_optional_div: Option<f64> = Some(0f64);
+    let still_optional_div: Option<f64> = div_err
+        .and_then(|x| {
+            if x > 10 {
+                Ok(x as f64)
+            } else {
+                Err("too small")
+            }
+        })
+        .ok();
 
     // The stage is yours. Try out different methods from the `Option` and `Result` documentation
     // and familiarize yourself with them.
+    let res = mult_some
+        .ok_or("not a small multiplication")
+        .map(|x| x * 2)
+        .map_err(|err| {
+            eprintln!("{}", err);
+            err.len()
+        })
+        .map_or_else(|e| e < 10, |x| x < 10);
+
+    println!("{}", res);
 }
