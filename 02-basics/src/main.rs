@@ -4,7 +4,7 @@
 //
 // The same goes for arguments: first you have to write the name, then the type: `name: T`.
 fn foo(a: bool) -> bool {
-    !a;
+    !a
 }
 
 fn bar() {
@@ -12,7 +12,7 @@ fn bar() {
     // `let name = expr;`
     let x = 42;
     // But you can specify a type and Rust will check if you assigned the correct type
-    let y: usize = 0u16;
+    let y: usize = 0usize;
     println!("x = {}; y = {}", x, y);
     // There's also variable shadowing in Rust, where you can redefine the variable with a
     // completely new type
@@ -23,8 +23,8 @@ fn bar() {
 
 fn quurx() {
     // By default everything is immutable
-    let x = 42;
-    x = x + 1;
+    let mut x = 42;
+    x += 1;
 
     // To make it mutable, you have to add the keyword `mut`
     let mut y = 10;
@@ -36,14 +36,14 @@ fn quurx() {
 fn baz() {
     // Type inference doesn't always work though. A prominent example is the `collect` method on
     // iterators.
-    let mut x = std::iter::empty().collect();
+    let mut x: Vec<_> = std::iter::empty().collect();
     x.push(42);
     // Let me introduce the turbofish to you: `::<>`
     let mut y = std::iter::empty().collect::<Vec<_>>();
     y.push(42);
 }
 
-fn quarx(s: String) {
+fn quarx(s: &str) {
     println!("{}", s);
 }
 
@@ -59,7 +59,7 @@ fn quarz(s: &mut String) {
 // this)
 fn macro_mania(a: u32, b: bool, s: &str) {
     // With the `format!` macro it is possible to format your types to `String`s.
-    let x = format!("a = {}");
+    let x = format!("a = {}", a);
     println!("{}", x);
 
     // `println!` use `format!` internally, so you don't need to `format!` things before printing
@@ -72,13 +72,10 @@ fn macro_mania(a: u32, b: bool, s: &str) {
 
     // Rust also provides macros to abort your program:
     panic!("PANIC: {}", s);
-    unreachable!();
-    unimplemented!();
-    todo!();
 }
 
 fn main() {
-    foo(100);
+    foo(true);
     bar();
     baz();
     quurx();
@@ -90,14 +87,14 @@ fn main() {
     // Try to fix this, by passing `s` to `quarx` by reference. Or in Rust speak: make `quarx`
     // borrow `s`.
     let mut s = String::from("I love Rust already!");
-    quarx(s);
+    quarx(&s);
     println!("{}", s);
 
     // When borrowing `s` as mutable, you won't be able to borrow it immutable. Try to fix this
     // somehow. You have to make sure, that no shared references to `s` exist anymore, when you
     // mutably borrow `s`.
-    let x = &mut s;
     macro_mania(42, false, &s);
+    let x = &mut s;
     quarz(x);
     println!("{}", s);
 
