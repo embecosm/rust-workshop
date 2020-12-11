@@ -7,15 +7,13 @@ fn closure(a: u32, s: String) {
     // You can look at closures as unnamed inner functions, that have access to the variables
     // around it.
     let check_string_shorter = |l: usize| -> bool {
-        let res = s.len() < l;
         // But be careful, if you transfer ownership of a outer variable inside a closure, it will
         // no longer be available in the code afterwards. It doesn't matter where you use the
         // closure, but where you define it.
         //
         // You can say that "the closure takes ownership of the outer variable". Remove the
         // following line to fix this function.
-        take(s);
-        res
+        s.len() < l
     };
 
     let check_string_longer = |l| s.len() > l;
@@ -51,9 +49,9 @@ fn call_take_closure() {
     println!("{}", take_closure(|a| a > 0));
 }
 
-fn take(s: String) {
-    println!("{}", s);
-}
+// fn take(s: String) {
+//     println!("{}", s);
+// }
 
 fn for_loops(vec: Vec<usize>) {
     // In Rust classic for-loops with a counter are discuraged. You will find that you almost never
@@ -65,7 +63,7 @@ fn for_loops(vec: Vec<usize>) {
     }
 
     // Because Rust is a convenient language you can also leave out the `.iter()` call.
-    for elem in vec {
+    for elem in &vec {
         println!("{}", elem);
     }
 
@@ -84,7 +82,7 @@ fn iterators(vec: Vec<usize>) {
     //
     // But see yourself. Change `into_iter()` to `iter()` and compare the compiler output by
     // uncommenting the `let` statement in the loop.
-    for elem in vec.into_iter() {
+    for elem in vec.iter() {
         // This is a hack to let the compiler show you the type of `elem`. `printf`-debugging
         // during compile time.
         // let _: () = elem;
@@ -99,7 +97,7 @@ fn iterators(vec: Vec<usize>) {
 
     // Before running the for loop you may want to modify the iterator, by for example filtering
     // out elements. See `iterators_on_steroids` for more useful methods of iterators.
-    for elem in vec.iter().filter(|x| x % 2 == 0) {
+    for elem in vec.iter().filter(|x| *x % 2 == 0) {
         println!("Only even: {}", elem);
     }
 }
@@ -111,7 +109,7 @@ fn iterators_on_steroids(vec: Vec<usize>) {
         // First get an iterator
         .iter()
         // Next only find the elements that are at least 3
-        .filter(|x| *x >= 3)
+        .filter(|x| *x >= &3)
         // Skip the fist element, because for some reason we don't care about this
         .skip(1)
         // Convert/Map the element to a `String`
@@ -123,7 +121,11 @@ fn iterators_on_steroids(vec: Vec<usize>) {
 
     // And now you. Go look at the `Iterator` documentation and and try to get the assert_eq below
     // to pass.
-    let first_two_even_floats = vec;
+    let first_two_even_floats = vec
+        .iter()
+        .filter_map(|x| if *x % 2 == 0 { Some(*x as f32) } else { None })
+        .take(2)
+        .collect::<Vec<_>>();
 
     assert_eq!(first_two_even_floats, vec![2f32, 4f32]);
 }
