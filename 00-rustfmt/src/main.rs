@@ -1,26 +1,11 @@
-fn main()
-{
+fn main() {
     let mess = "Hello, World!";
-    println!  (
+    println!("this is");
+    let _an = 42u32;
 
-"this is"
-                );
-    let
-        _an
-= 42u32
-  ;
-
-    absolute   (
-        mess );
+    absolute(mess);
 }
 
-fn absolute(
-hello:
-  &str)
-
-{
-    println!(
-    "{}",
-           hello)
-        ;
+fn absolute(hello: &str) {
+    println!("{}", hello);
 }
