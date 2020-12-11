@@ -19,7 +19,7 @@ impl<T> OptionalVector<T> {
 // trait implementations, like the `From` trait. Be careful to not shadow functions in other impl
 // blocks though!
 impl OptionalVector<usize> {
-    fn new(x: usize) -> Self {
+    fn new_usize(x: usize) -> Self {
         Self(Some(vec![x]))
     }
 }
@@ -29,7 +29,7 @@ impl OptionalVector<usize> {
 type OptionalVectorType<T> = Option<Vec<T>>;
 
 // The prove that imple blocks are not possible for type definitions.
-impl<T> OptionalVectorType<T> {}
+// impl<T> OptionalVectorType<T> {}
 
 /// You can also define generic parametes on functions.
 fn with_generic_parameter<T>(ovec: OptionalVectorType<T>) -> Vec<T> {
@@ -117,7 +117,7 @@ impl S {
     ///
     /// Remember: If two things have the same lifetime, they're tied together. So the return type
     /// should get the lifetime of the argument from which it is derived.
-    fn quarx(s: &str, _t: &str) -> &str { s }
+    fn quarx<'a>(s: &'a str, _t: &str) -> &'a str { s }
 
     /// Let's make it a little bit more complicated. We can have multiple lifetimes in only one
     /// argument. Remember, that we bound the lifetime of `WithLifetime`'s field to the struct? Now
@@ -127,7 +127,7 @@ impl S {
     ///
     /// (What the compiler suggests might work in this case, but in more complicated cases you
     /// should be careful where lifetimes are coming from)
-    fn quarz(s: &WithLifetime<'_>) -> &str {
+    fn quarz<'a>(s: &WithLifetime<'a>) -> &'a str {
         s.s
     }
 }
