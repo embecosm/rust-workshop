@@ -10,14 +10,14 @@ trait AnimalBehavior {
 
     // The keyword `Self` (uppercase) describes the implementing type. This is especially useful
     // for traits.
-    fn walk(&mut self, other: &Self);
+    fn walk<A: AnimalBehavior>(&mut self, other: &A);
 
     fn be_annoyed(&mut self);
 
     fn location(&self) -> (u32, u32);
 
     // This is an optional function, because it already has a default implementation.
-    fn annoy(&mut self, other: &mut Self) {
+    fn annoy<A: AnimalBehavior>(&mut self, other: &mut A) {
         self.walk(other);
 
         println!("{}", self.sound().to_uppercase());
@@ -46,14 +46,22 @@ struct Dog {
 
 // This doesn't implement all methods yet. Add those methods to make the compiler pass
 impl AnimalBehavior for Cat {
-    fn sound(self) -> String {
+    fn sound(&self) -> String {
         String::from("miaow")
     }
 
-    fn walk(&mut self, other: &Self) {
+    fn walk<A: AnimalBehavior>(&mut self, other: &A) {
         let (x, y) = other.location();
         self.x = x + 2;
         self.y = y + 2;
+    }
+
+    fn be_annoyed(&mut self) {
+        self.annoyed = true;
+    }
+
+    fn location(&self) -> (u32, u32) {
+        (self.x, self.y)
     }
 }
 
@@ -77,12 +85,13 @@ impl AnimalBehavior for Dog {
     }
 
     // Dogs are never annoying, so we reimplement this method, so that it just does nothing.
-    fn annoy(&mut self, other: &mut Self) {}
+    fn annoy<A: AnimalBehavior>(&mut self, _other: &mut A) {}
 }
 
-fn animals_do_animal_things<A>(animal_1: &mut A, animal_2: &mut A)
+fn animals_do_animal_things<A, B>(animal_1: &mut A, animal_2: &mut B)
 where
     A: AnimalBehavior,
+    B: AnimalBehavior,
 {
     animal_1.annoy(animal_2);
 }
@@ -103,13 +112,13 @@ impl std::ops::Add for Dog {
 
 // What you *can't* do is implement a foreign trait for a foreign type. One of the two have to be
 // defined in your own crate.
-impl std::ops::Add for Vec<usize> {
-    type Output = usize;
-
-    fn add(self, rhs: Vec<usize>) -> Self::Output {
-        self.iter().zip(&rhs).fold(0, |acc, (x, y)| acc + x + y)
-    }
-}
+// impl std::ops::Add for Vec<usize> {
+//     type Output = usize;
+//
+//     fn add(self, rhs: Vec<usize>) -> Self::Output {
+//         self.iter().zip(&rhs).fold(0, |acc, (x, y)| acc + x + y)
+//     }
+// }
 
 // To do this, you usually implement a wrapper type in combination with the `Deref` trait.
 struct USizeContainer(Vec<usize>);
