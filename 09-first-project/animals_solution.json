@@ -1,0 +1,134 @@
+[
+  {
+    "animals": [
+      {
+        "name": "Gustav 'SegFault' Rex",
+        "species": "T-Rex",
+        "strength": 9001,
+        "carnivore": true
+      },
+      {
+        "name": "Ferris",
+        "species": "Crab",
+        "strength": 9002,
+        "carnivore": false
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Simba",
+        "species": "Lion",
+        "strength": 150,
+        "carnivore": true
+      },
+      {
+        "name": "Eli",
+        "species": "Elephant",
+        "strength": 200,
+        "carnivore": false
+      },
+      {
+        "name": "Feli",
+        "species": "Elephant",
+        "strength": 250,
+        "carnivore": false
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Charlie",
+        "species": "Cougar",
+        "strength": 50,
+        "carnivore": true
+      },
+      {
+        "name": "Melman",
+        "species": "Giraffe",
+        "strength": 60,
+        "carnivore": false
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Chad",
+        "species": "Wolf",
+        "strength": 20,
+        "carnivore": true
+      },
+      {
+        "name": "Kevin",
+        "species": "Gorrilla",
+        "strength": 50,
+        "carnivore": false
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Sam",
+        "species": "Dog",
+        "strength": 12,
+        "carnivore": true
+      },
+      {
+        "name": "Chappy",
+        "species": "Dog",
+        "strength": 10,
+        "carnivore": true
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Birdie McBirdface",
+        "species": "Falcon",
+        "strength": 11,
+        "carnivore": true
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Foxy",
+        "species": "Fox",
+        "strength": 11,
+        "carnivore": true
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Molly",
+        "species": "Cat",
+        "strength": 5,
+        "carnivore": true
+      },
+      {
+        "name": "Bambi",
+        "species": "Deer",
+        "strength": 7,
+        "carnivore": false
+      }
+    ]
+  },
+  {
+    "animals": [
+      {
+        "name": "Sid",
+        "species": "Sloth",
+        "strength": 0,
+        "carnivore": false
+      }
+    ]
+  }
+]
